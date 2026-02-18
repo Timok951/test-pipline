@@ -1,0 +1,18 @@
+{% extends "index.html" %}
+{% block content %}
+
+<section class="top">
+    <div class="wrapper">
+        <h2 class="top__title section__title">
+            {% if mode == "edit" %}Редактировать продукт{% else %}Добавьте продукт{% endif %}
+        </h2>
+
+        <form method="post" enctype="multipart/form-data" class="form-card">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="top_card-button">Сохранить</button>
+        </form>
+    </div>
+</section>
+
+{% endblock %}

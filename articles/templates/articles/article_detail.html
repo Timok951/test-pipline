@@ -1,0 +1,44 @@
+{% extends "index.html" %}
+{% block content %}
+
+<section class="top">
+    <div class="wrapper">
+        <h2 class="top__title section__title">
+            {{ Article.name }}
+        </h2>
+
+        {% if Article.image %}
+            <div class="top__card-pic">
+                <img src="{{ Article.image.url }}" alt="Article" class="top__card-thumb">
+            </div>
+        {% endif %}
+
+        <p>{{ Article.text }}</p>
+
+        {% if Goods %}
+            <h3 class="section__title">Связанные продукты</h3>
+            <div class="top__cards">
+                {% for Good in Goods %}
+                    <div class="top__card">
+                        <div class="top__card-pic">
+                            <img src="{{ Good.image.url }}" alt="Good" class="top__card-thumb">
+                            <div class="top__card-stats">
+                                <h3 class="top__card-title">
+                                    {{ Good.name }}
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="top__card-price">
+                            <p class="top__card-price-text">$ {{ Good.cost }}</p>
+                        </div>
+                        <div class="top__card-misc">
+                            <a href="{% url 'good_page' Good.id %}" class="top_card-button">Открыть</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

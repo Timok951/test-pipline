@@ -1,0 +1,82 @@
+{% extends "index.html" %}
+{% block content %}
+
+<section class="top">
+    <div class="wrapper">
+        <h2 class="top__title section__title">
+            Warehouse
+        </h2>
+
+        <p>
+            <a href="{% url 'warehouse_good_create' %}" class="top_card-button">Add product</a>
+        </p>
+
+        <div class="top__cards">
+            {% for Good in Goods %}
+                <div class="top__card">
+                    <div class="top__card-pic">
+                        <img src="{{ Good.image.url }}" alt="Good" class="top__card-thumb">
+                        <div class="top__card-stats">
+                            <h3 class="top__card-title">
+                                {{ Good.name }}
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="top__card-price">
+                        <p class="top__card-price-text">$ {{ Good.cost }}</p>
+                        <p class="top__card-price-text">Stock: {{ Good.amount }}</p>
+                    </div>
+                    <div class="top__card-misc">
+                        <a href="{% url 'warehouse_good_edit' Good.id %}" class="top_card-button">Edit</a>
+                        <form method="post" action="{% url 'warehouse_good_delete' Good.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="top_card-button">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No products.</p>
+            {% endfor %}
+        </div>
+
+        <div class="top__cards">
+            <div class="top__card">
+                <h3 class="top__card-title">Add stock</h3>
+                <form method="post" action="{% url 'warehouse_add_stock' %}">
+                    {% csrf_token %}
+                    <select name="good_id">
+                        {% for Good in Goods %}
+                            <option value="{{ Good.id }}">{{ Good.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="number" name="good_add" value="1" min="1">
+                    <button type="submit" class="top_card-button">Add</button>
+                </form>
+            </div>
+
+            <div class="top__card">
+                <h3 class="top__card-title">Increase cost by 10%</h3>
+                <form method="post" action="{% url 'warehouse_add_cost' %}">
+                    {% csrf_token %}
+                    <select name="good_id">
+                        {% for Good in Goods %}
+                            <option value="{{ Good.id }}">{{ Good.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="top_card-button">Increase</button>
+                </form>
+            </div>
+
+            <div class="top__card">
+                <h3 class="top__card-title">Delete bad goods by rating</h3>
+                <form method="post" action="{% url 'warehouse_delete_bad_goods' %}">
+                    {% csrf_token %}
+                    <input type="number" step="0.1" name="rate" min="0" max="5" value="0">
+                    <button type="submit" class="top_card-button">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

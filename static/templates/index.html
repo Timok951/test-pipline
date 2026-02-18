@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магазин электроники БУМ</title>
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'javascript/jquerry.JS' %}" type="text/javascript"></script>
+    <script src="{% static 'javascript/shortcuts.js' %}" type="module"></script>
+</head>
+<body class="{% if user_preference %}theme-{{ user_preference.theme }}{% else %}theme-light{% endif %}">
+    {%block header%}
+        {%include "_inc/header.html"%}
+    {%endblock%}
+    {% if messages %}
+        <div class="message-stack">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <main>
+        {% block content%}
+            
+        {% endblock%}
+
+        {%block footer%}
+            <div class="wrapper">
+                {% include "_inc/footer.html"%}
+            </div>
+        {%endblock %}
+    </main>
+</body>
+</html>

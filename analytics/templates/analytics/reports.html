@@ -1,0 +1,126 @@
+{% extends "index.html" %}
+{% block content %}
+
+<section class="top">
+    <div class="wrapper">
+        <h2 class="top__title section__title">
+            Аналитические отчёты
+        </h2>
+        <p class="top__description">
+            Диаграммы отображают складские остатки и выручку, а таблицы показывают кэшированные представления,
+            отслеживающие заказы и наличие товаров.
+        </p>
+
+        <section class="chart-section">
+            <div class="chart-card">
+                <h3 class="top__card-title">Склад по типам</h3>
+                <canvas id="goods-chart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3 class="top__card-title">Динамика выручки</h3>
+                <canvas id="orders-chart"></canvas>
+            </div>
+        </section>
+
+        {% for view in views %}
+            <div class="top__card">
+                <h3 class="top__card-title">{{ view.label }}</h3>
+                {% if view.error %}
+                    <p>Ошибка: {{ view.error }}</p>
+                {% else %}
+                    <div class="top__card-misc" style="flex-direction: column; gap: 8px;">
+                        <p><strong>Столбцы:</strong> {{ view.columns|join:", " }}</p>
+                        <div class="table-scroll">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        {% for column in view.columns %}
+                                            <th>{{ column }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in view.rows %}
+                                        <tr>
+                                            {% for cell in row %}
+                                                <td>{{ cell }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="{{ view.columns|length }}">Нет данных</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const goodsUrl = "{% url 'analytics_goods_chart' %}";
+    const ordersUrl = "{% url 'analytics_orders_chart' %}";
+
+    function createChart(ctx, config) {
+        fetch(config.url)
+            .then((res) => {
+                if (!res.ok) throw new Error("Ошибка загрузки данных графика");
+                return res.json();
+            })
+            .then((data) => {
+                new Chart(ctx, {
+                    type: config.type,
+                    data: data,
+                    options: config.options || {},
+                });
+            });
+    }
+
+    const goodsCtx = document.getElementById("goods-chart");
+    const ordersCtx = document.getElementById("orders-chart");
+
+    if (goodsCtx) {
+        createChart(goodsCtx, {
+            url: goodsUrl,
+            type: "doughnut",
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: "bottom",
+                    },
+                    title: {
+                        display: true,
+                        text: "Остатки по категориям",
+                    },
+                },
+            },
+        });
+    }
+
+    if (ordersCtx) {
+        createChart(ordersCtx, {
+            url: ordersUrl,
+            type: "line",
+            options: {
+                scales: {
+                    y: { beginAtZero: true },
+                },
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: "Выручка по времени",
+                    },
+                },
+            },
+        });
+    }
+</script>
+
+{% endblock %}

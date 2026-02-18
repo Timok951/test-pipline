@@ -1,0 +1,45 @@
+{% extends "index.html" %}
+{% block content %}
+
+<section class="top">
+    <div class="wrapper">
+        <div class="top__cards">
+            <div class="top__card">
+                <header class="top__intro">
+                    <p class="top__subtitle">Ваши данные</p>
+                    <h2 class="top__title section__title">Профиль</h2>
+                </header>
+                <dl class="profile-details">
+                    <dt>Имя</dt>
+                    <dd>{{ request.user.username }}</dd>
+                    {% with request.user.usercredenetials as creds %}
+                        {% if creds.humanname %}
+                            <dt>Имя</dt>
+                            <dd>{{ creds.humanname }}</dd>
+                        {% endif %}
+                    {% endwith %}
+                    <dt>Email</dt>
+                    <dd>{{ request.user.email }}</dd>
+                    {% with request.user.usercredenetials as creds %}
+                        {% if creds.phonenumber %}
+                            <dt>Телефон</dt>
+                            <dd>{{ creds.phonenumber }}</dd>
+                        {% endif %}
+                    {% endwith %}
+                    <dt>Баланс бонусов</dt>
+                    <dd>{{ request.user.bonus|floatformat:2 }}</dd>
+                    {% if request.user.role %}
+                        <dt>Роль</dt>
+                        <dd>{{ request.user.role.rolename }}</dd>
+                    {% endif %}
+                </dl>
+                <div class="top__card-misc">
+                    <a class="top_card-button" href="{% url 'user_settings' %}">Редактировать настройки</a>
+                    <a class="top_card-button top_card-button--ghost" href="{% url 'logout_page' %}">Выйти </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

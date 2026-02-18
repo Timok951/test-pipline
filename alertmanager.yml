@@ -1,0 +1,19 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'telegram'
+
+receivers:
+  - name: 'telegram'
+    telegram_configs:
+      - bot_token: "8389143921:AAH8m4ka5fPB5Y6MvUIqLLpB3WcPqm6O4gE"
+        chat_id: "-5079642488"
+
+  - name: 'console'
+    webhook_configs:
+      - url: "http://host.docker.internal:5001/"  

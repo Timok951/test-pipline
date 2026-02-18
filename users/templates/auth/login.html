@@ -1,0 +1,24 @@
+{% extends "index.html" %}
+{% block content %}
+
+<section class="top">
+    <div class="wrapper">
+        <div class="form-card">
+            <header class="top__intro">
+                <p class="top__subtitle">Вход в аккаунт</p>
+                <h2 class="top__title section__title">Логин</h2>
+                <p class="top__description">Введите имя что бы продолжить</p>
+            </header>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="top_card-button">Войти</button>
+            </form>
+            <p class="top__description">
+                Нет акаунат ? <a href="{% url 'registration_page' %}">Создайте</a>.
+            </p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

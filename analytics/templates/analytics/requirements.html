@@ -1,0 +1,25 @@
+{% extends "index.html" %}
+{% block content %}
+
+<section class="top">
+    <div class="wrapper">
+        <h2 class="top__title section__title">Проверка требований</h2>
+        <div class="top__cards">
+            {% for item in requirements %}
+                <div class="top__card">
+                    <div class="top__card-stats" style="position: static; background: transparent;">
+                        <h3 class="top__card-title">{{ item.label }}</h3>
+                    </div>
+                    <p class="requirements__status">
+                        Стутс:
+                        <strong class="{% if item.status %}status-ok{% else %}status-missing{% endif %}">
+                            {% if item.status %}Прошёл{% else %}Утрачен{% endif %}
+                        </strong>
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

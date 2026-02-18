@@ -1,0 +1,88 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <header class="header" id="header">
+        <!-- Borders for our page defines empty space white-->
+        <div class="wrapper">
+            <!-- Wrapper to define styles only for header -->
+            <div class="header__wrapper">
+                <!-- It is better to leave logo in divs -->
+                <div class="header__logo">
+                    <!-- Logo must be in header -->
+                    <a href="/" class="header__logo-link">
+                        <img src="{% static './img/png/ElectroLogo.png' %}" alt="BoomShop" class="header__logo-pic">
+                    </a>
+                </div>
+            <!-- Nav must be in nav tag -->
+            <nav class="header__nav">
+                <!-- ul li best way to create nav list-->
+                <ul class="header__list" id="category-select">
+                    <li class="header__item">
+                        <a href="{% url 'home' %}" class="header__link">Главная страница</a>
+                    </li>
+                    <li class="header__item">
+                        <a href="{% url 'cart_summarry' %}" class="header__link">Корзина</a>
+                    </li>
+                    <li class="header__item">
+                        <a href="{% url 'article_list' %}" class="header__link">Статьи</a>
+                    </li>
+                    {% if request.user.is_authenticated %}
+                        <li class="header__item">
+                            <a href="{% url 'profile_page' %}" class="header__link">Профиль</a>
+                        </li>
+                        <li class="header__item">
+                            <a href="{% url 'user_settings' %}" class="header__link">Настройки</a>
+                        </li>
+                        {% if request.user.is_staff or request.user.is_superuser %}
+                            <li class="header__item">
+                                <a href="{% url 'admin_backup' %}" class="header__link">Бэкап</a>
+                            </li>
+                            <li class="header__item">
+                                <a href="/admin/" class="header__link">Панель администратора</a>
+                            </li>
+                        {% elif request.user.role %}
+                            {% with request.user.role.rolename|lower as role_name %}
+                                {% if role_name == "admin" or role_name == "administrator" %}
+                                    <li class="header__item">
+                                        <a href="{% url 'admin_report_pdf' %}" class="header__link">PDF отчёт</a>
+                                    </li>
+                                    <li class="header__item">
+                                        <a href="{% url 'admin_backup' %}" class="header__link">Бэкп</a>
+                                    </li>
+                                    <li class="header__item">
+                                        <a href="/admin/" class="header__link">Панель администрации</a>
+                                    </li>
+                                {% endif %}
+                                {% if role_name == "warehouse" %}
+                                    <li class="header__item">
+                                        <a href="{% url 'warehouse_dashboard' %}" class="header__link">Склад</a>
+                                    </li>
+                                {% endif %}
+                            {% endwith %}
+                        {% endif %}
+                    {% else %}
+                        <li class="header__item">
+                            <a href="{% url 'login' %}" class="header__link">Войти</a>
+                        </li>
+                        <li class="header__item">
+                            <a href="{% url 'registration_page' %}" class="header__link">Зарегестрироваться</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                <!-- Close button -->
+                <div class="header__nav-close">
+                    <span class="header__nav-close-line"></span>
+                    <span class="header__nav-close-line"></span>
+                </div>
+            </nav>        
+        </div>
+    </div>
+</header>
+
+</body>
+</html>

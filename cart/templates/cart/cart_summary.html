@@ -1,0 +1,85 @@
+{% extends "index.html" %}
+{% block content %}
+
+<section class="top">
+    <div class="wrapper">
+        <header class="top__intro">
+            <p class="top__subtitle">Ваши выбранные товары</p>
+            <h2 class="top__title section__title">Корзина</h2>
+            <p class="top__description">Проверьте количество товаров, обновите позиции и оформите заказ.</p>
+        </header>
+
+        {% if cart|length == 0 %}
+            <div class="form-card">
+                <p>Ваша корзина пуста.</p>
+                <a href="{% url 'home' %}" class="top_card-button">Перейти к товарам</a>
+            </div>
+        {% else %}
+            {% if error %}
+                <div class="inline-alert inline-alert--error">{{ error }}</div>
+            {% endif %}
+
+            <div class="top__cards">
+                {% for item in cart %}
+                    <div class="top__card">
+                        <div class="top__card-pic">
+                            <img src="{{ item.good.image.url }}" alt="{{ item.good.name }}" class="top__card-thumb">
+                            <div class="top__card-stats">
+                                <h3 class="top__card-title">
+                                    {{ item.good.name }}
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="top__card-meta">
+                            <span>Цена за единицу: {{ item.price_at_purchase }} ₽</span>
+                            <span>Количество: {{ item.amount }}</span>
+                        </div>
+                        <div class="top__card-price">
+                            <p class="top__card-price-text">Итого: {{ item.total_price }} ₽</p>
+                        </div>
+                        <div class="top__card-misc">
+                            <form method="post" action="{% url 'cart_update' item.good.id %}">
+                                {% csrf_token %}
+                                <input type="number" name="quantity" min="1" value="{{ item.amount }}">
+                                <button type="submit" class="top_card-button">Обновить</button>
+                            </form>
+                            <form method="post" action="{% url 'cart_delete' item.good.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="top_card-button top_card-button--ghost">Удалить</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="top__card">
+                <p class="top__card-price-text">Общая сумма: {{ cart_total|floatformat:2 }} ₽</p>
+                {% if request.user.is_authenticated %}
+                    <form method="post" action="{% url 'cart_checkout' %}" class="filter-grid">
+                        {% csrf_token %}
+                        <input type="text" name="address" placeholder="Адрес доставки" value="{{ address }}">
+                        <div class="filter-field">
+                            <label>Доступные бонусы</label>
+                            <input type="text" value="{{ bonus_available|floatformat:2 }}" readonly>
+                        </div>
+                        <div class="filter-field">
+                            <label>Использовать бонусы</label>
+                            <input type="number" name="bonus_to_use" min="0" step="0.01" max="{{ bonus_available|floatformat:2 }}" value="{{ bonus_to_use|default_if_none:'0.00' }}">
+                        </div>
+                        {% if total_after %}
+                            <p class="top__card-price-text">Сумма после списания бонусов: {{ total_after|floatformat:2 }} ₽</p>
+                        {% endif %}
+                        {% if bonus_earned %}
+                            <p class="top__card-price-text">Начислено бонусов: {{ bonus_earned|floatformat:2 }}</p>
+                        {% endif %}
+                        <button type="submit" class="top_card-button">Оформить заказ</button>
+                    </form>
+                {% else %}
+                    <p>Пожалуйста, <a href="{% url 'login' %}">войдите</a>, чтобы оформить заказ.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

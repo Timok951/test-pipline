@@ -1,0 +1,93 @@
+{% extends "index.html" %}
+{% block content %}
+
+<section class="top">
+    <div class="wrapper">
+        <div class="top__cards">
+            <div class="top__card">
+                <div class="top__card-pic">
+                    <img src="{{ Good.image.url }}" alt="{{ Good.name }}" class="top__card-thumb">
+                    <div class="top__card-stats">
+                        <h3 class="top__card-title">{{ Good.name }}</h3>
+                    </div>
+                </div>
+                <div class="top__card-meta">
+                    <span>{% if Good.type %}{{ Good.type.name }}{% else %}Общая категория{% endif %}</span>
+                    <span>{% if Good.company %}{{ Good.company.name }}{% else %}Независимый поставщик{% endif %}</span>
+                </div>
+                {% with Good.tag.all as tag_list %}
+                    {% if tag_list %}
+                        <div class="top__card-tags">
+                            {% for tag in tag_list %}
+                                <span class="top__tag-pill">{{ tag.name }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="top__card-price">
+                    <p class="top__card-price-text">{{ Good.cost|floatformat:2 }} ₽</p>
+                    <p class="top__card-price-text">В наличии: {{ Good.amount }}</p>
+                </div>
+                <div class="top__card-misc">
+                    <form method="post" action="{% url 'cart_add' Good.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="top_card-button">Добавить в корзину</button>
+                    </form>
+                    {% if request.user.is_authenticated %}
+                        <form method="post" action="{% url 'toggle_favorite' Good.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="top_card-button top_card-button--ghost">
+                                {% if is_favorite %}Убрать из избранного{% else %}Добавить в избранное{% endif %}
+                            </button>
+                        </form>
+                    {% else %}
+                        <a class="top_card-button top_card-button--ghost" href="{% url 'login' %}">
+                            Войдите, чтобы добавить в избранное
+                        </a>
+                    {% endif %}
+                </div>
+                {% if Good.article %}
+                    <div class="top__card-article">
+                        <h4 class="section__title">Статья</h4>
+                        <p>{{ Good.article.text|truncatechars:220 }}</p>
+                        <a href="{% url 'article_detail' Good.article.id %}" class="top_card-button">Читать полностью</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="top__cards">
+            <div class="top__card">
+                <h3 class="section__title">Отзывы</h3>
+                {% if reviews %}
+                    <div class="review-list">
+                        {% for review in reviews %}
+                            <div class="review-item">
+                                <strong>{{ review.user.username }}</strong>
+                                <span>Оценка: {{ review.rating }}</span>
+                                <p>{{ review.comment }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>Пока нет отзывов.</p>
+                {% endif %}
+            </div>
+            <div class="top__card">
+                <h3 class="section__title">Оставить отзыв</h3>
+                {% if request.user.is_authenticated %}
+                    <form method="post" action="{% url 'add_review' Good.id %}">
+                        {% csrf_token %}
+                        {{ review_form.as_p }}
+                        <button type="submit" class="top_card-button">Отправить отзыв</button>
+                    </form>
+                {% else %}
+                    <p>Пожалуйста, <a href="{% url 'login' %}">войдите</a>, чтобы оставить отзыв.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

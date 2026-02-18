@@ -1,0 +1,21 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Футек</title>
+</head>
+<body>
+<footer class="footer">
+    <div class="footer__item">
+        <p class="footer__tagline">Подбираем радиодетали с заботой</p>
+        <div class="footer__nav">
+            <a class="footer__menu-link" href="{% url 'home' %}">Главная страница</a>
+            <a class="footer__menu-link" href="{% url 'cart_summarry' %}">Корзина</a>
+            <a class="footer__menu-link" href="{% url 'article_list' %}">Статьи</a>
+        </div>
+    </div>
+    <small class="footer__menu-link">(c) {% now "Y" %}Магази БУМ</small>
+</footer>
+</body>
+</html>
